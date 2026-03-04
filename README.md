@@ -7,7 +7,7 @@
 > **Upstream docs:** <https://github.com/Podcastindex-org/helipad>
 >
 > Everything not listed in this document should behave the same as upstream
-> Helipad 0.2.1. If a feature, setting, or behavior is not mentioned here,
+> Helipad. If a feature, setting, or behavior is not mentioned here,
 > the upstream documentation is accurate and fully applicable.
 
 Helipad shows boosts and boostagram messages coming in to your Lightning node from listeners using Podcasting 2.0 apps.
@@ -81,7 +81,7 @@ StartOS-specific files in `main` volume:
 
 | Service | Required | Version | Health Checks |
 |---------|----------|---------|---------------|
-| LND | Yes | `>=0.20.0-beta:1-beta.3` | `primary`, `sync-progress` |
+| LND | Yes | `>=0.20.0-beta:2-beta.0` | `lnd`, `sync-progress` |
 
 LND's main volume is mounted readonly at `/mnt/lnd` for access to `tls.cert` and `data/chain/bitcoin/mainnet/admin.macaroon`.
 
@@ -140,8 +140,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for build instructions and development wo
 
 ```yaml
 package_id: helipad
-upstream_version: 0.2.1
-image: podcastindexorg/podcasting20-helipad:0.2.1
+image: podcastindexorg/podcasting20-helipad
 architectures: [x86_64, aarch64]
 volumes:
   main: /data
@@ -150,7 +149,7 @@ dependency_mounts:
 ports:
   ui: 2112
 dependencies:
-  - lnd (>=0.20.0-beta:1-beta.3)
+  - lnd (>=0.20.0-beta:2-beta.0)
 startos_managed_env_vars:
   - HELIPAD_DATABASE_DIR
   - HELIPAD_LISTEN_PORT

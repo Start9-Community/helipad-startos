@@ -1,16 +1,15 @@
 import { setupManifest } from '@start9labs/start-sdk'
-import { short, long } from './i18n'
+import { lndDescription, short, long } from './i18n'
 
 export const manifest = setupManifest({
   id: 'helipad',
   title: 'Helipad',
   license: 'MIT',
-  wrapperRepo: 'https://github.com/Podcastindex-org/helipad-startos',
+  packageRepo: 'https://github.com/Podcastindex-org/helipad-startos/tree/update/040',
   upstreamRepo: 'https://github.com/Podcastindex-org/helipad',
-  supportSite: 'https://podcastindex.social',
-  marketingSite: 'https://podcastindex.org',
+  marketingUrl: 'https://podcastindex.org',
   donationUrl: null,
-  docsUrl: 'https://github.com/Podcastindex-org/helipad',
+  docsUrls: ['https://github.com/Podcastindex-org/helipad'],
   description: { short, long },
   volumes: ['main'],
   images: {
@@ -23,11 +22,11 @@ export const manifest = setupManifest({
   },
   dependencies: {
     lnd: {
-      description: 'Used to communicate with your Lightning wallet.',
+      description: lndDescription,
       optional: false,
       metadata: {
         title: 'LND',
-        icon: 'https://raw.githubusercontent.com/Start9Labs/lnd-startos/refs/heads/master/icon.png',
+        icon: 'https://raw.githubusercontent.com/Start9Labs/lnd-startos/573b224e4f7ccbb0c009fa19e4c4eb50f2d51e61/icon.svg',
       },
     },
   },

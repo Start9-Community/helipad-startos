@@ -6,6 +6,14 @@ export const short = {
   fr_FR: 'Voir les boosts et boostagrams des applications Podcasting 2.0',
 }
 
+export const lndDescription = {
+  en_US: 'Used to communicate with your Lightning wallet.',
+  es_ES: 'Se usa para comunicarse con su billetera Lightning.',
+  de_DE: 'Wird zur Kommunikation mit Ihrer Lightning-Wallet verwendet.',
+  pl_PL: 'Służy do komunikacji z portfelem Lightning.',
+  fr_FR: 'Utilisé pour communiquer avec votre portefeuille Lightning.',
+}
+
 export const long = {
   en_US:
     'Helipad shows boosts and boostagram messages coming in to your Lightning node from your listeners who are using Podcasting 2.0 apps.',
