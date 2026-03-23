@@ -35,7 +35,7 @@ Helipad shows boosts and boostagram messages coming in to your Lightning node fr
 
 | Property | Value |
 |----------|-------|
-| Image | `podcastindexorg/podcasting20-helipad:0.2.1` |
+| Image | `podcastindexorg/podcasting20-helipad` |
 | Architectures | x86_64, aarch64 |
 | Entrypoint | Upstream default (via `sdk.useEntrypoint()`) |
 
@@ -79,9 +79,9 @@ StartOS-specific files in `main` volume:
 
 ## Dependencies
 
-| Service | Required | Version | Health Checks |
-|---------|----------|---------|---------------|
-| LND | Yes | `>=0.20.0-beta:2-beta.0` | `lnd`, `sync-progress` |
+| Service | Required | Health Checks |
+|---------|----------|---------------|
+| LND | Yes | `lnd`, `sync-progress` |
 
 LND's main volume is mounted readonly at `/mnt/lnd` for access to `tls.cert` and `data/chain/bitcoin/mainnet/admin.macaroon`.
 
@@ -132,7 +132,7 @@ The `main` volume is backed up, which includes:
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for build instructions and development workflow.
+Contributions welcome. Clone the repository, make your changes, and submit a pull request.
 
 ---
 
@@ -149,7 +149,7 @@ dependency_mounts:
 ports:
   ui: 2112
 dependencies:
-  - lnd (>=0.20.0-beta:2-beta.0)
+  - lnd
 startos_managed_env_vars:
   - HELIPAD_DATABASE_DIR
   - HELIPAD_LISTEN_PORT
