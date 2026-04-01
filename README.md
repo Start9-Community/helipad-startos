@@ -16,22 +16,23 @@ Helipad shows boosts and boostagram messages coming in to your Lightning node fr
 
 ## Table of Contents
 
-- [Container Runtime](#container-runtime)
-- [Volumes](#volumes)
+- [Image and Container Runtime](#image-and-container-runtime)
+- [Volume and Data Layout](#volume-and-data-layout)
 - [Installation and First-Run Flow](#installation-and-first-run-flow)
 - [Configuration Management](#configuration-management)
-- [Network Interfaces](#network-interfaces)
+- [Network Access and Interfaces](#network-access-and-interfaces)
 - [Dependencies](#dependencies)
-- [Actions](#actions)
-- [Backups](#backups)
+- [Actions (StartOS UI)](#actions-startos-ui)
+- [Backups and Restore](#backups-and-restore)
 - [Health Checks](#health-checks)
 - [Limitations and Differences](#limitations-and-differences)
 - [What Is Unchanged from Upstream](#what-is-unchanged-from-upstream)
 - [Contributing](#contributing)
+- [Quick Reference for AI Consumers](#quick-reference-for-ai-consumers)
 
 ---
 
-## Container Runtime
+## Image and Container Runtime
 
 | Property | Value |
 |----------|-------|
@@ -44,7 +45,7 @@ A root oneshot runs before the daemon to:
 2. Copy the LND admin macaroon to `/data/admin.macaroon` (the LND volume's `data/` tree is root-only)
 3. Install the LND TLS certificate into the system CA store (`update-ca-certificates`)
 
-## Volumes
+## Volume and Data Layout
 
 | Volume | Mount Point | Purpose |
 |--------|-------------|---------|
@@ -71,7 +72,7 @@ StartOS-specific files in `main` volume:
 | Run-as user | StartOS | Env var `HELIPAD_RUNAS_USER` (helipad) |
 | All other settings | Upstream | Helipad web UI or config file |
 
-## Network Interfaces
+## Network Access and Interfaces
 
 | Interface | Port | Protocol | Purpose |
 |-----------|------|----------|---------|
@@ -79,13 +80,13 @@ StartOS-specific files in `main` volume:
 
 ## Dependencies
 
-| Service | Required | Health Checks |
-|---------|----------|---------------|
-| LND | Yes | `lnd`, `sync-progress` |
+| Service | Required | Version | Health Checks |
+|---------|----------|---------|---------------|
+| LND | Yes | >= 0.20.1-beta | `lnd`, `sync-progress` |
 
 LND's main volume is mounted readonly at `/mnt/lnd` for access to `tls.cert` and `data/chain/bitcoin/mainnet/admin.macaroon`.
 
-## Actions
+## Actions (StartOS UI)
 
 ### Set/Reset Password
 
@@ -99,7 +100,7 @@ LND's main volume is mounted readonly at `/mnt/lnd` for access to `tls.cert` and
 
 Generates a random alphanumeric password and saves it to `store.json`. The password is displayed once for the user to save.
 
-## Backups
+## Backups and Restore
 
 The `main` volume is backed up, which includes:
 - SQLite database (`database.db`)
@@ -132,7 +133,7 @@ The `main` volume is backed up, which includes:
 
 ## Contributing
 
-Contributions welcome. Clone the repository, make your changes, and submit a pull request.
+See [CONTRIBUTING.md](CONTRIBUTING.md) for build instructions and development workflow.
 
 ---
 
