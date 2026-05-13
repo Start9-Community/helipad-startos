@@ -10,7 +10,6 @@ export const manifest = setupManifest({
   upstreamRepo: 'https://github.com/Podcastindex-org/helipad',
   marketingUrl: 'https://podcastindex.org',
   donationUrl: null,
-  docsUrls: ['https://github.com/Podcastindex-org/helipad'],
   description: { short, long },
   volumes: ['main'],
   images: {
