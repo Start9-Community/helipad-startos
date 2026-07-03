@@ -5,6 +5,7 @@ const dict = {
   'Web Interface': 0,
   'Helipad is ready': 1,
   'Helipad is not ready': 2,
+  'LND is not yet reachable on the internal network': 11,
 
   // interfaces.ts
   'Web UI': 3,

@@ -1,3 +1,7 @@
+import {
+  gRPCHostId as lndGrpcHostId,
+  gRPCInterfaceId as lndGrpcInterfaceId,
+} from 'lnd-startos/startos/interfaces'
 import { manifest as lndManifest } from 'lnd-startos/startos/manifest'
 import { i18n } from './i18n'
 import { sdk } from './sdk'
@@ -10,7 +14,30 @@ export const main = sdk.setupMain(async ({ effects }) => {
     throw new Error('No password')
   }
 
-  const appSub = await sdk.SubContainer.of(
+  // LND's gRPC over the LXC bridge — LND terminates its own TLS, whose
+  // StartOS-issued cert covers the bridge address (pinned via the mounted
+  // tls.cert). Replaces the static `lnd.startos:10009` DNS name.
+  const lndUrl = await sdk.host
+    .get(effects, { hostId: lndGrpcHostId, packageId: 'lnd' }, (host) => {
+      const iface =
+        host &&
+        Object.values(host.bindings)
+          .flatMap((b) => Object.values(b.interfaces))
+          .find((i) => i.id === lndGrpcInterfaceId)
+      const h =
+        iface &&
+        iface.addressInfo.filter({
+          kind: 'bridge',
+          predicate: (a) => a.ssl && a.metadata.kind === 'ipv4',
+        }).hostnames[0]
+      return h ? `${h.hostname}:${h.port}` : undefined
+    })
+    .const()
+  if (!lndUrl) {
+    throw new Error(i18n('LND is not yet reachable on the internal network'))
+  }
+
+  const appSub = sdk.SubContainer.of(
     effects,
     { imageId: 'main' },
     sdk.Mounts.of()
@@ -54,7 +81,7 @@ export const main = sdk.setupMain(async ({ effects }) => {
           HELIPAD_PASSWORD: password,
           LND_ADMINMACAROON: '/data/admin.macaroon',
           LND_TLSCERT: '/mnt/lnd/tls.cert',
-          LND_URL: 'lnd.startos:10009',
+          LND_URL: lndUrl,
         },
       },
       ready: {

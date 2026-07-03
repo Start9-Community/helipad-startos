@@ -13,6 +13,7 @@ export default {
     8: 'Guarde esta contraseña. La necesitará para iniciar sesión en Helipad.',
     9: 'Contraseña',
     10: 'Establezca su contraseña de Helipad',
+    11: 'LND aún no es accesible en la red interna',
   },
   de_DE: {
     0: 'Weboberfläche',
@@ -26,6 +27,7 @@ export default {
     8: 'Speichern Sie dieses Passwort. Sie benötigen es, um sich bei Helipad anzumelden.',
     9: 'Passwort',
     10: 'Setzen Sie Ihr Helipad-Passwort',
+    11: 'LND ist im internen Netzwerk noch nicht erreichbar',
   },
   pl_PL: {
     0: 'Interfejs webowy',
@@ -39,6 +41,7 @@ export default {
     8: 'Zapisz to hasło. Będziesz go potrzebować, aby zalogować się do Helipad.',
     9: 'Hasło',
     10: 'Ustaw swoje hasło Helipad',
+    11: 'LND nie jest jeszcze dostępny w sieci wewnętrznej',
   },
   fr_FR: {
     0: 'Interface web',
@@ -52,5 +55,6 @@ export default {
     8: 'Enregistrez ce mot de passe. Vous en aurez besoin pour vous connecter à Helipad.',
     9: 'Mot de passe',
     10: 'Définissez votre mot de passe Helipad',
+    11: "LND n'est pas encore accessible sur le réseau interne",
   },
 } satisfies Record<string, LangDict>
