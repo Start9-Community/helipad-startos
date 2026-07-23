@@ -1,7 +1,11 @@
+import {
+  gRPCHostId as lndGrpcHostId,
+  gRPCPort as lndGrpcPort,
+} from 'lnd-startos/startos/interfaces'
 import { manifest as lndManifest } from 'lnd-startos/startos/manifest'
 import { i18n } from './i18n'
 import { sdk } from './sdk'
-import { uiPort } from './utils'
+import { bridgeAddress, uiPort } from './utils'
 import { storeJson } from './fileModels/store.json'
 
 export const main = sdk.setupMain(async ({ effects }) => {
@@ -10,7 +14,21 @@ export const main = sdk.setupMain(async ({ effects }) => {
     throw new Error('No password')
   }
 
-  const appSub = await sdk.SubContainer.of(
+  // LND's gRPC over the LXC bridge — LND terminates its own TLS, whose
+  // StartOS-issued cert covers the bridge address (pinned via the mounted
+  // tls.cert). The mapped value tracks LND's assigned external port, so this
+  // .const() heals on LND's first wallet unlock (when the gRPC binding lands)
+  // and then stays constant across lock/unlock cycles and LND updates.
+  const lndUrl = await bridgeAddress(effects, {
+    packageId: 'lnd',
+    hostId: lndGrpcHostId,
+    internalPort: lndGrpcPort,
+  }).const()
+  if (!lndUrl) {
+    throw new Error(i18n('LND is not yet reachable on the internal network'))
+  }
+
+  const appSub = sdk.SubContainer.of(
     effects,
     { imageId: 'main' },
     sdk.Mounts.of()
@@ -54,7 +72,7 @@ export const main = sdk.setupMain(async ({ effects }) => {
           HELIPAD_PASSWORD: password,
           LND_ADMINMACAROON: '/data/admin.macaroon',
           LND_TLSCERT: '/mnt/lnd/tls.cert',
-          LND_URL: 'lnd.startos:10009',
+          LND_URL: lndUrl,
         },
       },
       ready: {
