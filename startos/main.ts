@@ -5,7 +5,7 @@ import {
 import { manifest as lndManifest } from 'lnd-startos/startos/manifest'
 import { i18n } from './i18n'
 import { sdk } from './sdk'
-import { bridgeAddress, uiPort } from './utils'
+import { uiPort } from './utils'
 import { storeJson } from './fileModels/store.json'
 
 export const main = sdk.setupMain(async ({ effects }) => {
@@ -19,11 +19,13 @@ export const main = sdk.setupMain(async ({ effects }) => {
   // tls.cert). The mapped value tracks LND's assigned external port, so this
   // .const() heals on LND's first wallet unlock (when the gRPC binding lands)
   // and then stays constant across lock/unlock cycles and LND updates.
-  const lndUrl = await bridgeAddress(effects, {
-    packageId: 'lnd',
-    hostId: lndGrpcHostId,
-    internalPort: lndGrpcPort,
-  }).const()
+  const lndUrl = await sdk.host
+    .getBridgeAddress(effects, {
+      packageId: 'lnd',
+      hostId: lndGrpcHostId,
+      internalPort: lndGrpcPort,
+    })
+    .const()
   if (!lndUrl) {
     throw new Error(i18n('LND is not yet reachable on the internal network'))
   }
