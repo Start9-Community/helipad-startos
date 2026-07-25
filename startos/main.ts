@@ -16,7 +16,7 @@ export const main = sdk.setupMain(async ({ effects }) => {
 
   // LND's gRPC over the LXC bridge — LND terminates its own TLS, whose
   // StartOS-issued cert covers the bridge address (pinned via the mounted
-  // tls.cert). The mapped value tracks LND's assigned external port, so this
+  // tls.cert). The bridge address tracks LND's gRPC binding, so this
   // .const() heals on LND's first wallet unlock (when the gRPC binding lands)
   // and then stays constant across lock/unlock cycles and LND updates.
   const lndUrl = await sdk.host
