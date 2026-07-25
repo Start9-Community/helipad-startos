@@ -82,9 +82,9 @@ StartOS-specific files in `main` volume:
 
 ## Dependencies
 
-| Service | Required | Version        | Health Checks          |
-| ------- | -------- | -------------- | ---------------------- |
-| LND     | Yes      | >= 0.20.1-beta | `lnd`, `sync-progress` |
+| Service | Required | Health Checks          |
+| ------- | -------- | ---------------------- |
+| LND     | Yes      | `lnd`, `sync-progress` |
 
 LND's main volume is mounted readonly at `/mnt/lnd` for access to `tls.cert` and `data/chain/bitcoin/mainnet/admin.macaroon`.
 
@@ -136,7 +136,7 @@ The `main` volume is backed up, which includes:
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for build instructions and development workflow.
+Build and development workflow follow the StartOS packaging guide: <https://docs.start9.com/packaging>. Keep `README.md`, `instructions.md`, and `AGENTS.md` in sync with any change to user-visible behavior or package structure.
 
 ---
 
