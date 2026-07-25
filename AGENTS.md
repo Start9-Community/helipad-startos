@@ -10,7 +10,7 @@ Work this package's `TODO.md` from top to bottom. Keep `README.md` (architecture
 
 ## This repo
 
-- **Package id is `helipad`.** It is a hard (non-optional) dependent of `lnd`: it imports `gRPCHostId` / `gRPCPort` from `lnd-startos/startos/interfaces` and resolves LND's gRPC over the LXC bridge via the doctrine-v3 `bridgeAddress` helper in `startos/utils.ts` (`LND_URL`), and mounts LND's data volume read-only to copy the admin macaroon and `tls.cert` into its own data dir on startup.
+- **Package id is `helipad`.** It is a hard (non-optional) dependent of `lnd`: it imports `gRPCHostId` / `gRPCPort` from `lnd-startos/startos/interfaces` and resolves LND's gRPC over the LXC bridge via `sdk.host.getBridgeAddress` (`LND_URL`), and mounts LND's data volume read-only to copy the admin macaroon and `tls.cert` into its own data dir on startup.
 
 ## Inspecting a running install
 
