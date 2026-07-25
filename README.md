@@ -34,25 +34,27 @@ Helipad shows boosts and boostagram messages coming in to your Lightning node fr
 
 ## Image and Container Runtime
 
-| Property | Value |
-|----------|-------|
-| Image | `podcastindexorg/podcasting20-helipad` |
-| Architectures | x86_64, aarch64 |
-| Entrypoint | Upstream default (via `sdk.useEntrypoint()`) |
+| Property      | Value                                        |
+| ------------- | -------------------------------------------- |
+| Image         | `podcastindexorg/podcasting20-helipad`       |
+| Architectures | x86_64, aarch64                              |
+| Entrypoint    | Upstream default (via `sdk.useEntrypoint()`) |
 
 A root oneshot runs before the daemon to:
+
 1. Set ownership of `/data` to the `helipad` user
 2. Copy the LND admin macaroon to `/data/admin.macaroon` (the LND volume's `data/` tree is root-only)
 3. Install the LND TLS certificate into the system CA store (`update-ca-certificates`)
 
 ## Volume and Data Layout
 
-| Volume | Mount Point | Purpose |
-|--------|-------------|---------|
-| `main` | `/data` | Database, copied macaroon, sounds |
+| Volume                  | Mount Point           | Purpose                            |
+| ----------------------- | --------------------- | ---------------------------------- |
+| `main`                  | `/data`               | Database, copied macaroon, sounds  |
 | LND `main` (dependency) | `/mnt/lnd` (readonly) | TLS cert and admin macaroon source |
 
 StartOS-specific files in `main` volume:
+
 - `store.json` — persists the login password
 
 ## Installation and First-Run Flow
@@ -63,26 +65,26 @@ StartOS-specific files in `main` volume:
 
 ## Configuration Management
 
-| Setting | Managed By | Method |
-|---------|-----------|--------|
-| Login password | StartOS | Action: "Set/Reset Password" |
-| Listen port | StartOS | Env var `HELIPAD_LISTEN_PORT` (2112) |
-| Database path | StartOS | Env var `HELIPAD_DATABASE_DIR` |
-| LND connection | StartOS | Env vars `LND_URL`, `LND_TLSCERT`, `LND_ADMINMACAROON` |
-| Run-as user | StartOS | Env var `HELIPAD_RUNAS_USER` (helipad) |
-| All other settings | Upstream | Helipad web UI or config file |
+| Setting            | Managed By | Method                                                 |
+| ------------------ | ---------- | ------------------------------------------------------ |
+| Login password     | StartOS    | Action: "Set/Reset Password"                           |
+| Listen port        | StartOS    | Env var `HELIPAD_LISTEN_PORT` (2112)                   |
+| Database path      | StartOS    | Env var `HELIPAD_DATABASE_DIR`                         |
+| LND connection     | StartOS    | Env vars `LND_URL`, `LND_TLSCERT`, `LND_ADMINMACAROON` |
+| Run-as user        | StartOS    | Env var `HELIPAD_RUNAS_USER` (helipad)                 |
+| All other settings | Upstream   | Helipad web UI or config file                          |
 
 ## Network Access and Interfaces
 
-| Interface | Port | Protocol | Purpose |
-|-----------|------|----------|---------|
-| Web UI | 2112 | HTTP | Helipad web interface |
+| Interface | Port | Protocol | Purpose               |
+| --------- | ---- | -------- | --------------------- |
+| Web UI    | 2112 | HTTP     | Helipad web interface |
 
 ## Dependencies
 
-| Service | Required | Version | Health Checks |
-|---------|----------|---------|---------------|
-| LND | Yes | >= 0.20.1-beta | `lnd`, `sync-progress` |
+| Service | Required | Version        | Health Checks          |
+| ------- | -------- | -------------- | ---------------------- |
+| LND     | Yes      | >= 0.20.1-beta | `lnd`, `sync-progress` |
 
 LND's main volume is mounted readonly at `/mnt/lnd` for access to `tls.cert` and `data/chain/bitcoin/mainnet/admin.macaroon`.
 
@@ -90,27 +92,28 @@ LND's main volume is mounted readonly at `/mnt/lnd` for access to `tls.cert` and
 
 ### Set/Reset Password
 
-| Property | Value |
-|----------|-------|
-| ID | `set-password` |
-| Allowed statuses | Any |
-| Visibility | Enabled |
-| Input | None |
-| Output | Generated 22-character password (masked, copyable) |
+| Property         | Value                                              |
+| ---------------- | -------------------------------------------------- |
+| ID               | `set-password`                                     |
+| Allowed statuses | Any                                                |
+| Visibility       | Enabled                                            |
+| Input            | None                                               |
+| Output           | Generated 22-character password (masked, copyable) |
 
 Generates a random alphanumeric password and saves it to `store.json`. The password is displayed once for the user to save.
 
 ## Backups and Restore
 
 The `main` volume is backed up, which includes:
+
 - SQLite database (`database.db`)
 - Sound files
 - `store.json` (password)
 
 ## Health Checks
 
-| Check | Method | Messages |
-|-------|--------|----------|
+| Check         | Method                | Messages                                                      |
+| ------------- | --------------------- | ------------------------------------------------------------- |
 | Web Interface | Port listening (2112) | Ready: "Helipad is ready" / Not ready: "Helipad is not ready" |
 
 ---
