@@ -6,12 +6,11 @@ Develop it inside a StartOS packaging workspace created by `start-cli s9pk init-
 which provides the packaging guide and agent context one level up. If you're reading this in a
 bare clone with no workspace, the full guide is at <https://docs.start9.com/packaging>.
 
-Work this package's `TODO.md` from top to bottom. Keep `README.md` (architecture, for developers and LLMs) and `instructions.md` (end-user docs) in sync with your changes.
+Work this package's `TODO.md` from top to bottom. Keep `README.md` (technical reference for an AI support or administering agent) and `instructions.md` (end-user docs) in sync with your changes.
 
 ## This repo
 
-- **Package id is `helipad`.** It is a hard (non-optional) dependent of `lnd`: it imports `gRPCHostId` / `gRPCPort` from `lnd-startos/startos/interfaces` and resolves LND's gRPC over the LXC bridge via `sdk.host.getBridgeAddress` (`LND_URL`), and mounts LND's data volume read-only to copy the admin macaroon and `tls.cert` into its own data dir on startup.
-
-## Inspecting a running install
-
-To run a command inside the service's container (read its generated config, grep app logs), use `start-cli package attach helipad -n helipad-sub -- <cmd>`. Select the subcontainer by **name** with `-n` (the name passed to `SubContainer.of` in `main.ts` — here `helipad-sub`) or by image with `-i`. Note: `-s/--subcontainer` matches the internal **Guid**, not the name, so passing a name to `-s` fails with "no matching subcontainers".
+- **The `setup` oneshot copies LND's macaroon onto this package's volume, and has to.** The original is root-owned `0600` on a read-only mount and Helipad runs unprivileged, so it cannot be read in place. The same oneshot installs LND's `tls.cert` into the container trust store — dropping either step leaves the daemon unable to reach LND. Note the consequence: full LND authority then lives on this volume and in every backup of it.
+- **`main` throws rather than starting when the password or LND's address is missing.** That is what makes the password task genuinely blocking, and what stops the service coming up disconnected. LND publishes its gRPC binding only after a first wallet unlock, so the `.const()` heals at that point.
+- **The password is stored and passed in plaintext because Helipad takes a password, not a hash.** There is nothing to hash it into; don't add one.
+- **Import LND's host id and port from `lnd-startos/startos/interfaces`** rather than hardcoding, so a change on LND's side is a compile error here.
