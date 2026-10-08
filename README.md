@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="icon.png" alt="Helipad Logo" width="21%">
+  <img src="icon.svg" alt="Helipad Logo" width="21%">
 </p>
 
 # Helipad on StartOS
@@ -92,7 +92,7 @@ One, and it is required.
 
 **This package uses LND's admin macaroon.** Helipad only reads, but the credential it is given is not read-only — anyone with this service's volume has full control of the node.
 
-**LND's sync check is required as well as its liveness**, so Helipad does not start against a node that is still catching up and would show an incomplete picture.
+**LND's sync check is required as well as its liveness.** StartOS reports the dependency unmet while LND is stopped or still catching up; the declaration itself does not hold Helipad's start.
 
 LND's gRPC address is resolved over the internal bridge, and **the service refuses to start if it does not resolve** rather than coming up disconnected. LND publishes that binding only after its wallet has first been unlocked, so the reactive read heals onto the real address at that point and then stays stable across later lock and unlock cycles.
 
@@ -108,11 +108,13 @@ One interface.
 
 Bound on the `ui-multi` MultiHost over HTTP and not masked. Helipad's own login gates it, using the password from the store.
 
+The StartOS 0.3.5 package served the UI from a host named `main`. Updating to `0.2.2:8` or later retires that leftover host in the version migration, freeing its port; nothing is moved, and the Web UI's own addresses are unaffected.
+
 ## Installation and First-Run Flow
 
 Install raises a critical task to set the password. **Nothing runs until it is done** — `main` throws without one, so this is not a prompt that can be ignored.
 
-After that the ordering is LND's: the service will not start until LND is running, synced, and has been unlocked at least once so its gRPC binding exists. All three are enforced rather than assumed.
+After that, LND has to have been unlocked at least once so its gRPC binding exists — `main` refuses to start until it does. LND not running or not synced is reported as an unmet dependency.
 
 Once running, Helipad begins recording boostagrams as they arrive. It shows what it has seen since it started — there is no backfill of payments that arrived before it was installed.
 
@@ -124,7 +126,7 @@ One action.
 
 Generates a new web login password and shows it once. Run it when its task appears, or to rotate the credential.
 
-- **What it changes:** the password in the store.
+- **What it changes:** the password in the store. When a password already exists, the action asks for confirmation first.
 - **Cost:** the service restarts, since the password is read into the application's environment at start.
 - **Repeat safety:** each run generates a **new** password and invalidates the previous one. There is no way to set a chosen value.
 - **Outputs:** the password, shown once.

@@ -9,7 +9,11 @@ export const setPassword = sdk.Action.withoutInput(
   async ({ effects }) => ({
     name: i18n('Set/Reset Password'),
     description: i18n('Generate a new Helipad login password'),
-    warning: null,
+    warning: (await storeJson.read((s) => s.password).const(effects))
+      ? i18n(
+          'Replaces the current Helipad password. The old password stops working, and Helipad restarts to apply the new one.',
+        )
+      : null,
     allowedStatuses: 'any',
     group: null,
     visibility: 'enabled',
