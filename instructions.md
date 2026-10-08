@@ -28,4 +28,4 @@ The **Web UI** is Helipad's full interface: incoming boosts and boostagrams, str
 
 ### Actions
 
-- **Set/Reset Password** — generates a new random Helipad login password and shows it once. Run this if you lose the password or want to rotate it. After running, restart Helipad and log in with the new password.
+- **Set/Reset Password** — generates a new random Helipad login password and shows it once. Run this if you lose the password or want to rotate it. When a password already exists, StartOS asks you to confirm first, since the old password stops working. Helipad restarts on its own; log in with the new password.

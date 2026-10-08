@@ -1,5 +1,5 @@
 import { setupManifest } from '@start9labs/start-sdk'
-import { lndDescription, long, short } from './i18n'
+import { long, short } from './i18n'
 
 export const manifest = setupManifest({
   id: 'helipad',
@@ -17,16 +17,7 @@ export const manifest = setupManifest({
         dockerTag: 'podcastindexorg/podcasting20-helipad:0.2.2',
       },
       arch: ['x86_64', 'aarch64'],
-    },
-  },
-  dependencies: {
-    lnd: {
-      description: lndDescription,
-      optional: false,
-      metadata: {
-        title: 'LND',
-        icon: 'https://raw.githubusercontent.com/Start9Labs/lnd-startos/f17336a10769efd8782a347662848c50c6270349/icon.svg',
-      },
+      emulateMissing: false,
     },
   },
 })

@@ -14,6 +14,7 @@ export default {
     9: 'Contraseña',
     10: 'Establezca su contraseña de Helipad',
     11: 'LND aún no es accesible en la red interna',
+    12: 'Reemplaza la contraseña actual de Helipad. La contraseña anterior deja de funcionar y Helipad se reinicia para aplicar la nueva.',
   },
   de_DE: {
     0: 'Weboberfläche',
@@ -28,6 +29,7 @@ export default {
     9: 'Passwort',
     10: 'Setzen Sie Ihr Helipad-Passwort',
     11: 'LND ist im internen Netzwerk noch nicht erreichbar',
+    12: 'Ersetzt das aktuelle Helipad-Passwort. Das alte Passwort funktioniert nicht mehr, und Helipad startet neu, um das neue zu übernehmen.',
   },
   pl_PL: {
     0: 'Interfejs webowy',
@@ -42,6 +44,7 @@ export default {
     9: 'Hasło',
     10: 'Ustaw swoje hasło Helipad',
     11: 'LND nie jest jeszcze dostępny w sieci wewnętrznej',
+    12: 'Zastępuje obecne hasło Helipad. Stare hasło przestaje działać, a Helipad uruchamia się ponownie, aby zastosować nowe.',
   },
   fr_FR: {
     0: 'Interface web',
@@ -56,5 +59,6 @@ export default {
     9: 'Mot de passe',
     10: 'Définissez votre mot de passe Helipad',
     11: "LND n'est pas encore accessible sur le réseau interne",
+    12: "Remplace le mot de passe actuel de Helipad. L'ancien mot de passe ne fonctionne plus et Helipad redémarre pour appliquer le nouveau.",
   },
 } satisfies Record<string, LangDict>

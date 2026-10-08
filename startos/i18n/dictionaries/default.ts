@@ -11,12 +11,13 @@ const dict = {
   'Web UI': 3,
   'The Helipad web interface': 4,
 
-  // actions/getPassword.ts
+  // actions/setPassword.ts
   'Set/Reset Password': 5,
   'Generate a new Helipad login password': 6,
   'Helipad Password': 7,
   'Save this password. You will need it to log in to Helipad.': 8,
   Password: 9,
+  'Replaces the current Helipad password. The old password stops working, and Helipad restarts to apply the new one.': 12,
 
   // init/initializeService.ts
   'Set your Helipad password': 10,

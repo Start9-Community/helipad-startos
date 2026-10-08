@@ -18,15 +18,23 @@ Freshly scaffolded? Work the
 guide page, not a file in this repo — read it, don't copy it in.
 
 Keep `README.md` (technical reference for an AI support or administering agent) and
-`instructions.md` (end-user docs) in sync with your changes.
+`instructions.md` (end-user docs) in sync with your changes. This file restates neither:
+whoever changes the package has both, so it carries only what they don't — repo mechanics,
+a change that looks right and is not, where the next thing gets added, a naming trap, a
+build or test invocation particular to this repo.
 
-**Bugs and feature requests are GitHub issues on this repo** — file them as you find them.
+**Fix a defect you spot rather than reporting it** — you have the package open and the
+context to be sure. File **a GitHub issue on this repo** only when the call isn't yours to
+make: you can't pin the cause down, two defensible fixes exist, or it's too large to ride on
+the work in hand. An open issue is a report, not a queue — implement one when you're asked
+to or when it's labelled `Approved`, then close it with `Closes #<n>`.
+
 Don't record work in the repo instead: no `TODO.md`, no `NOTES.md`, no `PLAN.md`. What you
 verified, tried, and decided belongs in the commit message and the PR body.
 
 ## This repo
 
-- **The `setup` oneshot copies LND's macaroon onto this package's volume, and has to.** The original is root-owned `0600` on a read-only mount and Helipad runs unprivileged, so it cannot be read in place. The same oneshot installs LND's `tls.cert` into the container trust store — dropping either step leaves the daemon unable to reach LND. Note the consequence: full LND authority then lives on this volume and in every backup of it.
-- **`main` throws rather than starting when the password or LND's address is missing.** That is what makes the password task genuinely blocking, and what stops the service coming up disconnected. LND publishes its gRPC binding only after a first wallet unlock, so the `.const()` heals at that point.
-- **The password is stored and passed in plaintext because Helipad takes a password, not a hash.** There is nothing to hash it into; don't add one.
+- **Keep both steps of the `setup` oneshot** — the macaroon copy and the CA install; Helipad runs unprivileged and cannot read LND's `0600` macaroon in place.
+- **Keep `main` throwing on a missing password or LND address** — it is what makes the password task blocking and stops the service coming up disconnected.
+- **Don't hash the password** — Helipad takes the password itself, not a digest.
 - **Import LND's host id and port from `lnd-startos/startos/interfaces`** rather than hardcoding, so a change on LND's side is a compile error here.
