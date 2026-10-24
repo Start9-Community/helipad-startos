@@ -1,18 +1,17 @@
 import { IMPOSSIBLE, VersionInfo } from '@start9labs/start-sdk'
 
 export const current = VersionInfo.of({
-  version: '0.2.2:9',
+  version: '0.2.2:10',
   releaseNotes: {
     en_US:
-      'Restarting Helipad while it is still starting stops every process of the previous run.',
+      'Stops trusting certificates from a compromised certificate authority (eMudhra).',
     es_ES:
-      'Reiniciar Helipad mientras aún se está iniciando detiene todos los procesos de la ejecución anterior.',
+      'Deja de confiar en los certificados de una autoridad de certificación comprometida (eMudhra).',
     de_DE:
-      'Ein Neustart von Helipad, während es noch startet, beendet alle Prozesse des vorherigen Laufs.',
+      'Vertraut Zertifikaten einer kompromittierten Zertifizierungsstelle (eMudhra) nicht mehr.',
     pl_PL:
-      'Ponowne uruchomienie Helipad w trakcie uruchamiania zatrzymuje wszystkie procesy poprzedniego uruchomienia.',
-    fr_FR:
-      "Redémarrer Helipad pendant son démarrage arrête tous les processus de l'exécution précédente.",
+      'Przestaje ufać certyfikatom przejętego urzędu certyfikacji (eMudhra).',
+    fr_FR: `Ne fait plus confiance aux certificats d'une autorité de certification compromise (eMudhra).`,
   },
   migrations: {
     up: async ({ effects }) => {},

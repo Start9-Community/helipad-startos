@@ -1,6 +1,6 @@
 # Updating the upstream version
 
-Helipad ships as a prebuilt Docker image. The only upstream pin is the image tag in the manifest.
+Helipad ships as a prebuilt Docker image, wrapped by the root `Dockerfile`. The only upstream pin is the image tag in the manifest's build args.
 
 ## Determining the upstream version
 
@@ -16,8 +16,8 @@ Helipad ships as a prebuilt Docker image. The only upstream pin is the image tag
   curl -fsSL "https://hub.docker.com/v2/repositories/podcastindexorg/podcasting20-helipad/tags?page_size=20&ordering=last_updated" | jq -r '.results[].name'
   ```
 
-  Pin lives in `startos/manifest/index.ts` (`images.main.source.dockerTag`).
+  Pin lives in `startos/manifest/index.ts` (`images.main.source.dockerBuild.buildArgs.IMAGE`).
 
 ## Applying the bump
 
-- **`startos/manifest/index.ts`** — set `images.main.source.dockerTag` to `podcastindexorg/podcasting20-helipad:<new version>`.
+- **`startos/manifest/index.ts`** — set `images.main.source.dockerBuild.buildArgs.IMAGE` to `podcastindexorg/podcasting20-helipad:<new version>`.

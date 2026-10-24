@@ -14,7 +14,9 @@ export const manifest = setupManifest({
   images: {
     main: {
       source: {
-        dockerTag: 'podcastindexorg/podcasting20-helipad:0.2.2',
+        dockerBuild: {
+          buildArgs: { IMAGE: 'podcastindexorg/podcasting20-helipad:0.2.2' },
+        },
       },
       arch: ['x86_64', 'aarch64'],
       emulateMissing: false,
