@@ -35,13 +35,13 @@
 
 ## Image and Container Runtime
 
-One upstream image, consumed unmodified.
+One upstream image, with its CA store upgraded by the root `Dockerfile`, a temporary layer that comes out once upstream ships an image built on a fixed store.
 
-| Property      | Value                                      |
-| ------------- | ------------------------------------------ |
-| Image         | `podcastindexorg/podcasting20-helipad`     |
-| Architectures | x86_64, aarch64                            |
-| Entrypoint    | The image's own, via `sdk.useEntrypoint()` |
+| Property      | Value                                                      |
+| ------------- | ---------------------------------------------------------- |
+| Image         | `podcastindexorg/podcasting20-helipad` + root `Dockerfile` |
+| Architectures | x86_64, aarch64                                            |
+| Entrypoint    | The image's own, via `sdk.useEntrypoint()`                 |
 
 | Subcontainer  | Purpose                                                   |
 | ------------- | --------------------------------------------------------- |
@@ -176,7 +176,7 @@ A restored instance comes back with its history and its password, and re-copies 
 
 ```yaml
 package_id: helipad
-image: podcastindexorg/podcasting20-helipad
+image: podcastindexorg/podcasting20-helipad + root Dockerfile (CA store upgrade)
 architectures:
   - x86_64
   - aarch64
