@@ -60,11 +60,13 @@ One volume, plus a read-only view of LND's.
 | `main`            | `/data`     | The boostagram database, the store, and a macaroon copy |
 | LND's `main` (ro) | `/mnt/lnd`  | LND's TLS certificate and admin macaroon                |
 
-| Path             | Written by  | Holds                                   |
-| ---------------- | ----------- | --------------------------------------- |
-| `database.db`    | Helipad     | Every boostagram it has seen            |
-| `store.json`     | The package | The web login password                  |
-| `admin.macaroon` | The oneshot | A readable copy of LND's admin macaroon |
+| Path             | Written by  | Holds                                                        |
+| ---------------- | ----------- | ------------------------------------------------------------ |
+| `database.db`    | Helipad     | Every boostagram it has seen, plus the triggers and settings |
+| `store.json`     | The package | The web login password                                       |
+| `admin.macaroon` | The oneshot | A readable copy of LND's admin macaroon                      |
+
+The StartOS 0.3.5 package kept the database at `db/database.db`. Updating to `0.2.2:11` or later moves it to `database.db` in the version migration. **An install that has already run Helipad on `database.db` is left as it is**: Helipad created that file empty on its first start and refilled the boosts from LND, so both files hold data and the migration cannot tell which one is wanted. The triggers and settings from before the update stay in `db/database.db`.
 
 **A copy of LND's admin macaroon lives on this volume**, which means the volume — and every backup of it — carries full authority over your Lightning node. That is a consequence of how the credential has to be made readable, and it is worth knowing before deciding where backups go.
 
@@ -80,7 +82,7 @@ It records the web login password, in plaintext, and hands it to the application
 
 `main` reads it reactively and **refuses to start without it**, which is what makes the setup task genuinely blocking rather than advisory.
 
-Everything else — the boostagram history, display settings — is the application's, in its own database, and is not modelled.
+Everything else — the boostagram history, triggers, display settings — is the application's, in its own database, and is not modelled.
 
 ## Dependencies
 
