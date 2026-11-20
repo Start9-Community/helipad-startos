@@ -34,7 +34,7 @@ verified, tried, and decided belongs in the commit message and the PR body.
 
 ## This repo
 
-- **Keep both steps of the `setup` oneshot** — the macaroon copy and the CA install; Helipad runs unprivileged and cannot read LND's root-owned, non-world-readable macaroon in place.
+- **Keep the `idmap` on LND's mount, and don't copy the macaroon onto `main`** — Helipad runs unprivileged and reads LND's root-owned macaroon only through that remap; a copy on `main` would put a node credential in every backup.
 - **Keep `main` throwing on a missing password or LND address** — it is what makes the password task blocking and stops the service coming up disconnected.
 - **Don't hash the password** — Helipad takes the password itself, not a digest.
 - **Import LND's host id and port from `lnd-startos/startos/interfaces`** rather than hardcoding, so a change on LND's side is a compile error here.

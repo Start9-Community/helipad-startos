@@ -47,9 +47,9 @@ One upstream image, with its CA store upgraded by the root `Dockerfile`, a tempo
 | ------------- | --------------------------------------------------------- |
 | `helipad-sub` | The setup oneshot and the daemon — the one to `attach` to |
 
-**A oneshot runs as root before the daemon**, and does three things the application cannot do for itself: it takes ownership of the data directory, **copies LND's macaroon onto its own volume**, and installs LND's certificate into the container's trust store.
+**A oneshot runs as root before the daemon**, and does two things the application cannot do for itself: it takes ownership of the data directory, and installs LND's certificate into the container's trust store.
 
-The copy matters. LND's macaroon is root-owned and not world-readable on a read-only mount, and Helipad runs unprivileged — so it cannot read the original. A copy with its ownership changed is what makes the credential usable without running the application as root.
+**Helipad reads LND's admin macaroon in place, from the mount.** LND's credentials are root-owned and not world-readable, and Helipad runs unprivileged, so the mount remaps their owner (uid 0) to the `helipad` user (uid 1000).
 
 ## Volume and Data Layout
 
@@ -57,18 +57,15 @@ One volume, plus a read-only view of LND's.
 
 | Volume                        | Mount Point | Purpose                                                 |
 | ----------------------------- | ----------- | ------------------------------------------------------- |
-| `main`                        | `/data`     | The boostagram database, the store, and a macaroon copy |
+| `main`                        | `/data`     | The boostagram database and the store                   |
 | LND's `public` (ro), `admin/` | `/mnt/lnd`  | LND's TLS certificate and admin macaroon — nothing else |
 
-| Path             | Written by  | Holds                                                        |
-| ---------------- | ----------- | ------------------------------------------------------------ |
-| `database.db`    | Helipad     | Every boostagram it has seen, plus the triggers and settings |
-| `store.json`     | The package | The web login password                                       |
-| `admin.macaroon` | The oneshot | A readable copy of LND's admin macaroon                      |
+| Path          | Written by  | Holds                                                        |
+| ------------- | ----------- | ------------------------------------------------------------ |
+| `database.db` | Helipad     | Every boostagram it has seen, plus the triggers and settings |
+| `store.json`  | The package | The web login password                                       |
 
 The StartOS 0.3.5 package kept the database at `db/database.db`. Updating to `0.2.2:11` or later moves it to `database.db` in the version migration. **An install that has already run Helipad on `database.db` is left as it is**: Helipad created that file empty on its first start and refilled the boosts from LND, so both files hold data and the migration cannot tell which one is wanted. The triggers and settings from before the update stay in `db/database.db`.
-
-**A copy of LND's admin macaroon lives on this volume**, which means the volume — and every backup of it — carries full authority over your Lightning node. That is a consequence of how the credential has to be made readable, and it is worth knowing before deciding where backups go.
 
 ## File Models
 
@@ -92,7 +89,7 @@ One, and it is required.
 | ---------- | -------- | ---------------------- | ----------------------------------------------- | -------------------------------- |
 | LND        | Yes      | `lnd`, `sync-progress` | `public` tier `admin/`, read-only at `/mnt/lnd` | The node whose payments it reads |
 
-**This package uses LND's admin macaroon.** Helipad only reads, but the credential it is given is not read-only — anyone with this service's volume has full control of the node.
+**This package uses LND's admin macaroon.** Helipad only reads, but the credential it is given is not read-only. It stays on LND's volume and never reaches this service's volume or backups.
 
 **LND's sync check is required as well as its liveness.** StartOS reports the dependency unmet while LND is stopped or still catching up; the declaration itself does not hold Helipad's start.
 
@@ -157,20 +154,17 @@ It reports that the interface is serving, not that the node connection is workin
 
 ## Backups and Restore
 
-The `main` volume is copied wholesale — `sdk.Backups.ofVolumes('main')`. That is the boostagram history, the password, **and the copy of LND's admin macaroon**.
+The `main` volume is copied wholesale — `sdk.Backups.ofVolumes('main')`. That is the boostagram history and the password; no LND credential.
 
-**Treat this backup as a Lightning credential**, not just an application backup. The macaroon copy in it grants full control of the node it came from.
-
-A restored instance comes back with its history and its password, and re-copies the macaroon from whatever LND is present on the new server — so the stale copy in the backup is replaced rather than used. It still needs LND installed, unlocked, and synced before it will start.
+A restored instance comes back with its history and its password, and reads the macaroon from whatever LND is present on the new server. It still needs LND installed, unlocked, and synced before it will start.
 
 ## Limitations and Differences
 
-1. **A copy of LND's admin macaroon is on the volume**, and therefore in every backup.
-2. **The password cannot be chosen**, only generated — and rotating it restarts the service.
-3. **The service will not start without a password**, without LND, or before LND's wallet has been unlocked once.
-4. **No backfill.** Helipad records boostagrams from when it starts; earlier payments are not imported.
-5. **Mainnet only.** LND's `admin/` tier carries the mainnet admin macaroon.
-6. **No configuration surface** beyond the password; everything else is Helipad's own.
+1. **The password cannot be chosen**, only generated — and rotating it restarts the service.
+2. **The service will not start without a password**, without LND, or before LND's wallet has been unlocked once.
+3. **No backfill.** Helipad records boostagrams from when it starts; earlier payments are not imported.
+4. **Mainnet only.** LND's `admin/` tier carries the mainnet admin macaroon.
+5. **No configuration surface** beyond the password; everything else is Helipad's own.
 
 ---
 
@@ -193,7 +187,7 @@ startos_managed_env_vars:
   - HELIPAD_LISTEN_PORT
   - HELIPAD_RUNAS_USER
   - HELIPAD_PASSWORD
-  - LND_ADMINMACAROON # a copy on this package's own volume
+  - LND_ADMINMACAROON # /mnt/lnd/admin.macaroon, read in place
   - LND_TLSCERT
   - LND_URL
 dependencies:

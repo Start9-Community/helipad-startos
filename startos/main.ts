@@ -46,6 +46,8 @@ export const main = sdk.setupMain(async ({ effects }) => {
         subpath: 'admin',
         mountpoint: '/mnt/lnd',
         readonly: true,
+        // LND's credentials are root-owned; present them as helipad (uid 1000).
+        idmap: [{ fromId: 0, toId: 1000 }],
       }),
     'helipad-sub',
   )
@@ -57,7 +59,7 @@ export const main = sdk.setupMain(async ({ effects }) => {
         command: [
           'sh',
           '-c',
-          'chown -R helipad:helipad /data && cp /mnt/lnd/admin.macaroon /data/admin.macaroon && chown helipad:helipad /data/admin.macaroon && cp /mnt/lnd/tls.cert /usr/local/share/ca-certificates/lnd.crt && update-ca-certificates',
+          'chown -R helipad:helipad /data && cp /mnt/lnd/tls.cert /usr/local/share/ca-certificates/lnd.crt && update-ca-certificates',
         ],
         user: 'root',
       },
@@ -72,7 +74,7 @@ export const main = sdk.setupMain(async ({ effects }) => {
           HELIPAD_LISTEN_PORT: String(uiPort),
           HELIPAD_RUNAS_USER: 'helipad',
           HELIPAD_PASSWORD: password,
-          LND_ADMINMACAROON: '/data/admin.macaroon',
+          LND_ADMINMACAROON: '/mnt/lnd/admin.macaroon',
           LND_TLSCERT: '/mnt/lnd/tls.cert',
           LND_URL: lndUrl,
         },
